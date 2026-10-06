@@ -1,0 +1,8 @@
+# Reporte con costos del mayorista: NO publicar
+scraper/reporte_precios.csv
+scraper/ultima_sync.log
+__pycache__/
+
+# Notas internas: no publicar
+PENDIENTES-LEGALES.md
+INVIMA-MARCAS.md

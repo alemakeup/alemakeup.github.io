@@ -1,0 +1,132 @@
+{
+  "tienda": {
+    "nombre": "Alemakeup Cosmetics",
+    "eslogan": "Belleza en cada detalle",
+    "whatsapp": "573228192721",
+    "moneda": "COP",
+    "titular": "[COMPLETAR: nombre completo de la titular o razón social]",
+    "documento": "[COMPLETAR: C.C. o NIT]",
+    "ciudad": "[COMPLETAR: ciudad]",
+    "direccion": "[COMPLETAR: dirección de contacto o 'Venta en línea, sin local físico']",
+    "email": "[COMPLETAR: correo de contacto]",
+    "instagram": "",
+    "horario_atencion": "Lunes a sábado de 8:00 a.m. a 6:00 p.m.",
+    "tiempo_envio": "Despacho en 1 a 2 días hábiles después de confirmado el pago. Envíos nacionales: 3 a 5 días hábiles.",
+    "medios_pago": [
+      "Transferencia bancaria",
+      "Nequi",
+      "Daviplata",
+      "Pago contra entrega (según cobertura)"
+    ]
+  },
+  "precios": {
+    "margen_porcentaje": 50,
+    "redondear_a": 500,
+    "no_superar_precio_detal_mayorista": false
+  },
+  "mayorista": {
+    "api": "https://elb.soyclickstore.com/api/v1",
+    "dominio": "gealmakeupstore.getcs.link",
+    "imagenes_url": "https://d3cj1y2eynyat2.cloudfront.net/productos",
+    "por_pagina": 50,
+    "pausa_segundos": 0.4
+  },
+  "imagenes": {
+    "max_por_producto": 4,
+    "ancho_max_px": 900,
+    "calidad_webp": 80,
+    "descargas_simultaneas": 4
+  },
+  "categorias": {
+    "excluir_que_contengan": [
+      "promo"
+    ],
+    "grupos": {
+      "Maquillaje": [
+        "ROSTRO",
+        "KITS",
+        "SOMBRAS",
+        "POLVOS",
+        "BASES",
+        "ILUMINADORES",
+        "LABIOS",
+        "FIJADORES",
+        "OJOS",
+        "BRONZER",
+        "BROCHAS",
+        "ACCESORIOS MAQUILLAJE"
+      ],
+      "Cabello": [
+        "CAPILAR",
+        "ACCESORIOS CABELLO"
+      ],
+      "Cuidado facial y corporal": [
+        "CUIDADO FACIAL",
+        "CORPORAL"
+      ],
+      "Accesorios": [
+        "ACCESORIOS"
+      ]
+    }
+  },
+  "marcas": {
+    "Atenea": [
+      "ATENEA"
+    ],
+    "Montoc": [
+      "MONTOC"
+    ],
+    "Lula": [
+      "LULA"
+    ],
+    "Outdoor Girl": [
+      "OUTDOOR",
+      " OG "
+    ],
+    "Lehit": [
+      "LEHIT"
+    ],
+    "Purpure": [
+      "PURPURE"
+    ],
+    "Bloomshell": [
+      "BLOOMSHELL",
+      "BLOOM "
+    ],
+    "Ani-K": [
+      "ANI-K",
+      "ANIK",
+      "ANI K"
+    ],
+    "Miis": [
+      "MIIS"
+    ],
+    "Alissha": [
+      "ALISSHA",
+      "ALISS"
+    ],
+    "Milagros": [
+      "MILAGROS"
+    ],
+    "Dolce Bella": [
+      "DOLCE BELLA",
+      "DOLCE"
+    ],
+    "Samy": [
+      "SAMY"
+    ],
+    "Girly": [
+      "GIRLY"
+    ],
+    "Enchanté": [
+      "ENCHANTE"
+    ],
+    "Majikal": [
+      "MAJIKAL"
+    ],
+    "Ruby Rose": [
+      "RUBY ROSE",
+      "RUBY"
+    ]
+  }
+}

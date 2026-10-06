@@ -1,0 +1,62 @@
+# Actualiza el catálogo del mayorista y publica la tienda en GitHub Pages.
+# - Todos los días a las 6:00 a.m. hora Colombia (11:00 UTC)
+# - Cada vez que se suben cambios a la rama main
+# - Manualmente desde la pestaña "Actions" → "Actualizar y publicar" → "Run workflow"
+name: Actualizar y publicar
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar librerías
+        run: pip install -r requirements.txt
+
+      - name: Actualizar catálogo del mayorista
+        if: github.event_name != 'push'
+        run: python scraper/sync.py
+
+      - name: Guardar cambios del catálogo en el repositorio
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "alemakeup-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add site/
+          if git diff --cached --quiet; then
+            echo "Sin cambios en el catálogo."
+          else
+            git commit -m "Actualización automática del catálogo ($(TZ=America/Bogota date '+%Y-%m-%d %H:%M'))"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
