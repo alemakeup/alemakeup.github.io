@@ -6,15 +6,23 @@ Los productos, las fotos y los precios se copian automáticamente del catálogo 
 
 ## Uso diario
 
+**La tienda está publicada en https://alemakeup.github.io**
+
+**Todos los días a las 6:00 a.m.** GitHub actualiza sola la tienda con los productos, precios y fotos del mayorista.
+No hace falta tener el computador prendido.
+
 | Quiero… | Hago… |
 |---|---|
-| Ver la tienda | Doble clic en **`Abrir tienda.bat`** |
-| Traer productos, precios y fotos nuevos del mayorista | Doble clic en **`Actualizar catalogo.bat`** (tarda 1–3 min; las fotos ya descargadas no se vuelven a bajar) |
-| Cambiar el % de ganancia | Editar `margen_porcentaje` en `config.json` y volver a actualizar |
-| Cambiar datos de contacto, medios de pago o tiempos de envío | Editar la sección `tienda` de `config.json` y volver a actualizar |
+| Ver la tienda en internet | Abrir https://alemakeup.github.io |
+| Ver la tienda en el computador, sin internet | Doble clic en **`Abrir tienda.bat`** |
+| Cambiar el % de ganancia, datos de contacto, medios de pago… | Editar `config.json` y luego doble clic en **`Publicar cambios.bat`**; los precios nuevos salen en la próxima actualización (6 a.m.) |
+| Actualizar el catálogo ya, sin esperar a las 6 a.m. | En GitHub: pestaña **Actions** → **Actualizar y publicar** → **Run workflow** |
+| Probar el catálogo en el computador | Doble clic en **`Actualizar catalogo.bat`** (no publica nada) |
 
-> Actualiza el catálogo **antes de compartir el enlace y al menos una vez por semana**.
-> Por ley, el precio publicado se debe respetar, así que el precio de la página no debe quedar por debajo del costo real.
+Si GitHub no puede leer al mayorista (por ejemplo, porque su página está caída), la tienda sigue mostrando la última versión
+y GitHub le envía un correo a la cuenta **alemakeup**.
+
+> El precio publicado se debe respetar por ley. La actualización diaria evita que un cambio de precio del mayorista la haga vender a pérdida.
 
 ## config.json
 
@@ -53,7 +61,11 @@ El mayorista usa la plataforma ClickStore. El script lee las categorías y los p
 que usa su propia página (`elb.soyclickstore.com`), toma el precio **mayorista** (`preciomayor`), calcula el precio de venta
 y descarga las fotos en formato WebP reducido. Si el mayorista cambia de plataforma, el script deja de funcionar y hay que adaptarlo.
 
-## Publicar en internet (cuando lo decidan)
+## Dónde está publicada
 
-La carpeta `site/` es una página estática, así que se puede publicar gratis en Netlify (arrastrar la carpeta en app.netlify.com/drop),
-Cloudflare Pages o GitHub Pages. Antes de publicar, completa los datos pendientes en `config.json` (ver `PENDIENTES-LEGALES.md`).
+- Tienda: https://alemakeup.github.io
+- Código y actualizaciones: https://github.com/alemakeup/alemakeup.github.io (pestaña **Actions**)
+- Para usar un dominio propio (ej. `alemakeup.com.co`): en el repositorio → Settings → Pages → Custom domain.
+
+El repositorio es **público**: cualquiera puede ver el código y `config.json` (incluido el % de ganancia), pero **no** los costos
+del mayorista ni las notas internas (`PENDIENTES-LEGALES.md`, `INVIMA-MARCAS.md`), que solo están en el computador.
