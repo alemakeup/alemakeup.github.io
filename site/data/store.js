@@ -16,11 +16,5 @@ window.TIENDA = {
     "Nequi",
     "Daviplata",
     "Pago contra entrega (según cobertura)"
-  ],
-  "beneficios": [
-    "Marcas reconocidas",
-    "Precios justos",
-    "Envíos a toda Colombia",
-    "Atención personalizada"
   ]
 };
