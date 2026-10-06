@@ -37,6 +37,10 @@ jobs:
       - name: Instalar librerías
         run: pip install -r requirements.txt
 
+      - name: Actualizar datos de la tienda (config.json)
+        if: github.event_name == 'push'
+        run: python scraper/sync.py --solo-tienda
+
       - name: Actualizar catálogo del mayorista
         if: github.event_name != 'push'
         run: python scraper/sync.py

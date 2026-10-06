@@ -5,6 +5,7 @@ echo ================================================
 echo   Alemakeup - Publicando cambios en internet
 echo ================================================
 git pull --rebase --autostash
+python scraper\sync.py --solo-tienda
 git add -A
 git commit -m "Cambios desde el computador"
 git push

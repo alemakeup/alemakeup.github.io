@@ -25,6 +25,11 @@
   function fillStore(root = document) {
     root.querySelectorAll("[data-store]").forEach((el) => {
       const k = el.dataset.store;
+      if (!T[k] && k !== "whatsapp") {
+        const fila = el.closest("tr, li, [data-opcional]");
+        if (fila) fila.remove(); else el.remove();
+        return;
+      }
       if (k === "whatsapp") el.innerHTML = esc(waVisible());
       else if (k === "medios_pago") el.innerHTML = (T.medios_pago || []).map(esc).join(", ");
       else el.innerHTML = dato(T[k]);
@@ -47,7 +52,7 @@
               ${T.instagram ? `<li>Instagram: <a href="https://instagram.com/${esc(T.instagram.replace("@", ""))}" target="_blank" rel="noopener">${esc(T.instagram)}</a></li>` : ""}
               <li>Atención: ${esc(T.horario_atencion)}</li>
             </ul>
-            <p class="legal-id">Titular: ${dato(T.titular)} · ${dato(T.documento)}<br>${dato(T.direccion)} · ${dato(T.ciudad)}, Colombia</p>
+            <p class="legal-id">Titular: ${[T.titular, T.documento].filter(Boolean).map(dato).join(" · ")}<br>${[T.direccion, T.ciudad].filter(Boolean).map(dato).join(" · ")}, Colombia</p>
           </div>
           <div>
             <h4>Información</h4>

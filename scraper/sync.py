@@ -155,12 +155,25 @@ def procesar_imagen(args):
         return False
 
 
+def escribir_tienda(cfg):
+    DIR_DATA.mkdir(parents=True, exist_ok=True)
+    (DIR_DATA / "store.js").write_text(
+        "window.TIENDA = " + json.dumps(cfg["tienda"], ensure_ascii=False, indent=2) + ";\n",
+        encoding="utf-8",
+    )
+
+
 def main():
     ap = argparse.ArgumentParser(description="Sincroniza el catálogo del mayorista.")
     ap.add_argument("--sin-fotos", action="store_true", help="no descargar fotos")
+    ap.add_argument("--solo-tienda", action="store_true", help="solo regenerar datos de la tienda (store.js)")
     args = ap.parse_args()
 
     cfg = cargar_config()
+    if args.solo_tienda:
+        escribir_tienda(cfg)
+        print("Datos de la tienda actualizados.")
+        return
     excluir = [normalizar(x) for x in cfg["categorias"]["excluir_que_contengan"]]
     marcas = [(m, [normalizar(k) if k.strip() == k else " " + normalizar(k) + " " for k in ks])
               for m, ks in cfg.get("marcas", {}).items()]
@@ -275,10 +288,7 @@ def main():
         "window.CATALOGO = " + json.dumps(catalogo, ensure_ascii=False, separators=(",", ":")) + ";\n",
         encoding="utf-8",
     )
-    (DIR_DATA / "store.js").write_text(
-        "window.TIENDA = " + json.dumps(cfg["tienda"], ensure_ascii=False, indent=2) + ";\n",
-        encoding="utf-8",
-    )
+    escribir_tienda(cfg)
 
     with open(REPORTE, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=list(reporte[0].keys()) if reporte else ["producto"], delimiter=";")
