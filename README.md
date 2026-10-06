@@ -30,7 +30,11 @@ y GitHub le envía un correo a la cuenta **alemakeup**.
 - `precios.redondear_a`: redondea hacia arriba el precio de venta (500 → $17.250 queda en $17.500).
 - `precios.no_superar_precio_detal_mayorista`: si es `true`, el precio nunca supera el precio al detal del mayorista.
 - `categorias.excluir_que_contengan`: categorías del mayorista que no se publican (por ejemplo, promociones).
-- `categorias.grupos`: cómo se agrupan las categorías del mayorista en las categorías de la tienda.
+- `categorias.reglas`: clasifica cada producto por palabras de su nombre (ej. "BROCHA" → Accesorios / Brochas).
+  Se revisan en orden y gana la primera que coincide. Las categorías del mayorista solo se usan si el nombre no dice nada,
+  porque el mayorista tiene varios productos mal ubicados.
+- `categorias.correcciones`: para mover un producto puntual. Copia su `id` de `scraper/reporte_precios.csv` y escribe
+  `"<id>": ["Grupo", "Subcategoría"]`, por ejemplo `"65f3b50dfa51540c701ce6ea": ["Maquillaje", "Ojos y cejas"]`.
 - `imagenes.max_por_producto`: fotos por producto (más fotos ocupan más espacio).
 
 ## Archivos

@@ -120,7 +120,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .section-title h2 { font-family: var(--serif); font-weight: 600; letter-spacing: .08em; font-size: clamp(24px, 3vw, 32px); margin: 6px 0 0; }
 .divider { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--rose); margin-top: 8px; }
 .divider::before, .divider::after { content: ""; width: 60px; height: 1px; background: var(--blush-2); }
-.cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.cat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
 .cat-card {
   display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
   background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
@@ -320,7 +320,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 @media (max-width: 520px) {
   .cat-grid { grid-template-columns: repeat(2, 1fr); }
-  .cat-grid .cat-card:last-child { grid-column: 1 / -1; }
   .info-grid { grid-template-columns: 1fr; }
   .brand-name { font-size: 16px; }
   .brand img { width: 44px; height: 44px; }

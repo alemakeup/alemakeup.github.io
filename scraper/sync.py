@@ -92,21 +92,34 @@ def descargar_productos(cfg):
     # Las categorías "smart" (p. ej. Más Vendidos) repiten los mismos productos: se omiten
     categorias = [c for c in aplanar(tienda["categorias"]) if not c.get("smart") and c.get("activo", True)]
 
-    productos = {}
-    for n, cat in enumerate(categorias, 1):
+    def paginas(ruta, filtro=""):
         pagina, total_paginas = 1, 1
         while pagina <= total_paginas:
             params = {
                 "negocio": negocio, "pagina": pagina, "porPagina": m["por_pagina"],
-                "filtro": "", "smart": "false", "ref": "false",
+                "filtro": filtro, "smart": "false", "ref": "false",
             }
-            body = get_json(f"{m['api']}/market/products/{cat['_id']}", params)["body"]
+            body = get_json(f"{m['api']}/market/products/{ruta}", params)["body"]
             total_paginas = body.get("pagTotal") or 0
-            for p in body.get("data", []):
-                productos.setdefault(p["_id"], p)
+            yield from body.get("data", [])
             pagina += 1
             time.sleep(m["pausa_segundos"])
+
+    # 1) Por categoría, guardando en cuáles aparece cada producto
+    productos = {}
+    for n, cat in enumerate(categorias, 1):
+        for p in paginas(cat["_id"]):
+            productos.setdefault(p["_id"], {**p, "_cats": []})["_cats"].append(cat["descripcion"])
         print(f"  [{n}/{len(categorias)}] {cat['descripcion']:<35} total: {len(productos)}")
+
+    # 2) Con el buscador de la tienda: encuentra productos de categorías ocultas del menú
+    antes = len(productos)
+    for letra in "aeiou0123456789":
+        for p in paginas("all", letra):
+            if p["_id"] not in productos:
+                ocultas = [c["descripcion"] for c in p.get("categories", []) if not c.get("smart")]
+                productos[p["_id"]] = {**p, "_cats": ocultas}
+    print(f"  Buscador: {len(productos) - antes} productos más (en categorías ocultas del menú del mayorista)")
     return list(productos.values())
 
 
@@ -123,11 +136,52 @@ def precio_venta(p, cfg):
     return costo, venta
 
 
-def grupo_de(categoria_norm, reglas):
-    for clave, grupo in reglas:
-        if clave in categoria_norm:
-            return grupo
-    return "Otros"
+class Clasificador:
+    """Asigna grupo y subcategoría de la tienda a partir del nombre del producto.
+
+    Orden: corrección manual → reglas de accesorios → categoría del mayorista si es solo de maquillaje
+    → resto de reglas por palabras → reglas de maquillaje por palabras → categoría del mayorista → "Otros".
+    """
+
+    def __init__(self, cfg_cat):
+        def prep(reglas):
+            return [(r["grupo"], r["sub"], [normalizar(k) if k.strip() == k else " " + normalizar(k) + " " for k in r["palabras"]],
+                     [normalizar(k) for k in r.get("requiere", [])]) for r in reglas]
+        self.reglas = prep(cfg_cat["reglas"])
+        self.reglas_maq = prep(cfg_cat["reglas_maquillaje"])
+        self.mapa = sorted(((normalizar(k), tuple(v)) for k, v in cfg_cat["por_categoria_mayorista"].items()),
+                           key=lambda x: -len(x[0]))
+        self.correcciones = {k: tuple(v) for k, v in cfg_cat.get("correcciones", {}).items()}
+        self.mezcladas = [normalizar(x) for x in cfg_cat.get("categorias_mezcladas", [])]
+
+    @staticmethod
+    def _buscar(reglas, nombre):
+        for grupo, sub, palabras, requiere in reglas:
+            if any(k in nombre for k in palabras) and (not requiere or any(k in nombre for k in requiere)):
+                return grupo, sub
+        return None
+
+    def _mapear(self, cat):
+        cn = normalizar(cat)
+        return next((destino for clave, destino in self.mapa if clave in cn), None)
+
+    def __call__(self, pid, titulo, cats):
+        if pid in self.correcciones:
+            return self.correcciones[pid]
+        nombre = " " + normalizar(titulo) + " "
+        accesorios = [r for r in self.reglas if r[0] == "Accesorios"]
+        otras = [r for r in self.reglas if r[0] != "Accesorios"]
+        destinos = [d for d in map(self._mapear, cats) if d]
+        confiables = [d for c, d in zip(cats, map(self._mapear, cats))
+                      if d and not any(x in normalizar(c) for x in self.mezcladas)]
+        hallado = self._buscar(accesorios, nombre)
+        if hallado:
+            return hallado
+        # Si el mayorista lo tiene solo en categorías de maquillaje, se respeta (ej. "Corrector sérum")
+        if confiables and all(d[0] == "Maquillaje" for d in confiables):
+            return confiables[0]
+        return (self._buscar(otras, nombre) or self._buscar(self.reglas_maq, nombre)
+                or (destinos[0] if destinos else ("Otros", "Otros")))
 
 
 def procesar_imagen(args):
@@ -177,10 +231,7 @@ def main():
     excluir = [normalizar(x) for x in cfg["categorias"]["excluir_que_contengan"]]
     marcas = [(m, [normalizar(k) if k.strip() == k else " " + normalizar(k) + " " for k in ks])
               for m, ks in cfg.get("marcas", {}).items()]
-    reglas = sorted(
-        ((normalizar(k), g) for g, claves in cfg["categorias"]["grupos"].items() for k in claves),
-        key=lambda x: -len(x[0]),
-    )
+    clasificar = Clasificador(cfg["categorias"])
 
     print("1/3 Leyendo catálogo del mayorista...")
     crudos = descargar_productos(cfg)
@@ -194,14 +245,8 @@ def main():
         if venta <= 0:
             continue
 
-        cats = [c for c in p.get("categories", []) if not c.get("smart")]
-        cats = [c for c in cats if not any(x in normalizar(c["descripcion"]) for x in excluir)]
-        if cats:
-            cat = cats[0]["descripcion"]
-            grupo = grupo_de(normalizar(cat), reglas)
-            categoria = titulo_bonito(cat)
-        else:
-            grupo, categoria = "Otros", "Otros"
+        cats = [c for c in p.get("_cats", []) if not any(x in normalizar(c) for x in excluir)]
+        grupo, categoria = clasificar(p["_id"], p.get("title", ""), cats)
 
         imagenes = []
         for i, nombre in enumerate((p.get("images") or [])[: cfg["imagenes"]["max_por_producto"]]):
@@ -231,15 +276,18 @@ def main():
             "ref": (p.get("inventario") or {}).get("sku", "").strip(),
         })
         reporte.append({
+            "id": p["_id"],
             "producto": p.get("title", "").strip(),
+            "grupo": grupo,
             "categoria": categoria,
+            "categoria_mayorista": " / ".join(titulo_bonito(c) for c in cats),
             "costo_mayorista": costo,
             "precio_detal_mayorista": p.get("precio") or 0,
             "precio_alemakeup": venta,
             "ganancia": venta - costo,
         })
 
-    orden_grupos = list(cfg["categorias"]["grupos"].keys())
+    orden_grupos = cfg["categorias"]["orden_grupos"]
     productos.sort(key=lambda x: (
         orden_grupos.index(x["grupo"]) if x["grupo"] in orden_grupos else len(orden_grupos),
         x["categoria"], x["nombre"].lower(),
@@ -267,7 +315,7 @@ def main():
     arbol = {}
     for prod in productos:
         arbol.setdefault(prod["grupo"], set()).add(prod["categoria"])
-    orden = list(cfg["categorias"]["grupos"].keys()) + ["Otros"]
+    orden = cfg["categorias"]["orden_grupos"] + ["Otros"]
     categorias = [{"grupo": g, "subcategorias": sorted(arbol[g])} for g in orden if g in arbol]
 
     conteo_marcas = {}

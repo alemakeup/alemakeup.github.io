@@ -41,33 +41,450 @@
     "excluir_que_contengan": [
       "promo"
     ],
-    "grupos": {
-      "Maquillaje": [
-        "ROSTRO",
-        "KITS",
-        "SOMBRAS",
-        "POLVOS",
-        "BASES",
-        "ILUMINADORES",
-        "LABIOS",
-        "FIJADORES",
-        "OJOS",
-        "BRONZER",
-        "BROCHAS",
-        "ACCESORIOS MAQUILLAJE"
+    "orden_grupos": [
+      "Maquillaje",
+      "Cuidado de la piel",
+      "Cabello",
+      "Cuerpo y perfumes",
+      "Accesorios"
+    ],
+    "reglas": [
+      {
+        "grupo": "Accesorios",
+        "sub": "Herramientas",
+        "palabras": [
+          "SPULING",
+          "ENCRESPADOR",
+          "DEPILADOR",
+          "PERFILADOR",
+          "TIJERA",
+          "SEPARADOR DE PESTA",
+          "APLICADOR DE LABIOS",
+          "APLICADOR DE PESTA"
+        ]
+      },
+      {
+        "grupo": "Accesorios",
+        "sub": "Brochas",
+        "palabras": [
+          "BROCHA",
+          "PINCEL"
+        ]
+      },
+      {
+        "grupo": "Accesorios",
+        "sub": "Esponjas, borlas y algodón",
+        "palabras": [
+          "BLENDER",
+          "BORLA",
+          "ESPONJA",
+          "SPONGE",
+          "PUFF",
+          "TRIANGULO APLICADOR",
+          "TRIANGULARES",
+          "COTTON PADS",
+          "PADS DE ALGODON"
+        ]
+      },
+      {
+        "grupo": "Accesorios",
+        "sub": "Cosmetiqueras y organizadores",
+        "palabras": [
+          "COSMETIQUERA",
+          "NECESER",
+          "MALETA",
+          "ORGANIZADOR",
+          "JOYERO",
+          "ENVASES VIAJEROS"
+        ]
+      },
+      {
+        "grupo": "Accesorios",
+        "sub": "Accesorios para el cabello",
+        "palabras": [
+          "CAIMAN",
+          "CAIMA ",
+          "PINZA CABELLO",
+          "PINZA FLOWER",
+          "PINZA MONO",
+          "SCRUNCHIE",
+          "MONA ",
+          "GORRO",
+          "HEBILLA",
+          "BLOOM ACCESORIO",
+          "CEPILLO",
+          "TOALLA DE MICROFIBRA"
+        ]
+      },
+      {
+        "grupo": "Accesorios",
+        "sub": "Otros accesorios",
+        "palabras": [
+          "ESPEJO DE",
+          "ANTIFAZ",
+          "STICKER",
+          "GEMAS",
+          "DIADEMA",
+          "BALACA",
+          "MUNEQUERA"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Kits corporales",
+        "palabras": [
+          "KIT CORPORAL",
+          "KIT CREMA",
+          "KIT STRAWBERRY"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Cremas y mantequillas",
+        "palabras": [
+          "MANTEQUILLA",
+          "CREMA CORPORAL",
+          "ACEITE CORPORAL",
+          "CREMA DE MANOS",
+          "CREMA FROST"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Exfoliantes y baño",
+        "palabras": [
+          "EXFOLIANTE CORPORAL",
+          "JABON CREMOSO",
+          "GEL DE DUCHA"
+        ]
+      },
+      {
+        "grupo": "Cabello",
+        "sub": "Shampoo y acondicionador",
+        "palabras": [
+          "SHAMPOO",
+          "CHAMPU",
+          "ACONDICIONADOR"
+        ]
+      },
+      {
+        "grupo": "Cabello",
+        "sub": "Perfumes y peinado",
+        "palabras": [
+          "PERFUME",
+          "TERMOPROTECTOR",
+          "DESENREDANTE",
+          "WAX"
+        ],
+        "requiere": [
+          "CAPILAR",
+          "CABELLO",
+          "HAIR",
+          "SHAMPOO",
+          "CHAMPU",
+          "ACONDICIONADOR",
+          "LEHIT",
+          "MILAGROS",
+          "RITUAL BOTANICO",
+          "LLUVIA DE ESTRELLAS",
+          "KERATIN",
+          "KERACRECE",
+          "RIZOS",
+          "AMPOLL",
+          "REPOLARIZ",
+          "TINTE",
+          "MIL-"
+        ]
+      },
+      {
+        "grupo": "Cabello",
+        "sub": "Tratamientos y ampollas",
+        "palabras": [
+          "CAPILAR",
+          "CABELLO",
+          "HAIR",
+          "SHAMPOO",
+          "CHAMPU",
+          "ACONDICIONADOR",
+          "LEHIT",
+          "MILAGROS",
+          "RITUAL BOTANICO",
+          "LLUVIA DE ESTRELLAS",
+          "KERATIN",
+          "KERACRECE",
+          "RIZOS",
+          "AMPOLL",
+          "REPOLARIZ",
+          "TINTE",
+          "MIL-"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Fijadores y primers",
+        "palabras": [
+          "PRIMER",
+          "FIJADOR",
+          "MAKEUP FIX",
+          "MIST FIX"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Kits faciales",
+        "palabras": [
+          "KIT FACIAL",
+          "KIT MEDICUBE"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Protector solar",
+        "palabras": [
+          "PROTECTOR SOLAR",
+          "BLOQUEADOR"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Control de grasa y acné",
+        "palabras": [
+          "PAPEL",
+          "PAPER",
+          "PARCHE",
+          "GRANOS",
+          "ACNE"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Limpieza y desmaquillantes",
+        "palabras": [
+          "MICELAR",
+          "DESMAQUILL",
+          "LIMPIADOR",
+          "LIMPIADORA",
+          "ESPUMA",
+          "JABON",
+          "AGUA LIMPIADORA",
+          "TOALLITAS"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Tónicos y brumas",
+        "palabras": [
+          "TONICO",
+          "BRUMA",
+          "AGUA DE ROSAS"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Sérums",
+        "palabras": [
+          "SERUM",
+          "SUERO"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Mascarillas y exfoliantes",
+        "palabras": [
+          "MASCARILLA",
+          "EXFOLIANTE FACIAL",
+          "PEELING"
+        ]
+      },
+      {
+        "grupo": "Cuidado de la piel",
+        "sub": "Hidratantes y contorno de ojos",
+        "palabras": [
+          "HIDRATANTE",
+          "CONTORNO DE OJOS",
+          "CONTORNOS DE OJOS",
+          "CREMA HYDRO",
+          "CREMA FACIAL"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Brillos e iluminadores",
+        "palabras": [
+          "ILUMINADOR CORPORAL",
+          "SPRAY ILUMINADOR",
+          "SPLASH ILUMINADOR",
+          "SHIMMER",
+          "BRILLI",
+          "GLITTER",
+          "CHISPITAS",
+          "BODY GLOW"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Splash y perfumes",
+        "palabras": [
+          "SPLASH",
+          "PERFUME",
+          "BODY MIST"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Cremas y mantequillas",
+        "palabras": [
+          "CREMA HUMECTANTE"
+        ]
+      },
+      {
+        "grupo": "Cuerpo y perfumes",
+        "sub": "Exfoliantes y baño",
+        "palabras": [
+          "EXFOLIANTE"
+        ]
+      }
+    ],
+    "reglas_maquillaje": [
+      {
+        "grupo": "Maquillaje",
+        "sub": "Polvos sueltos y compactos",
+        "palabras": [
+          "POLVO"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Bronzer y contornos",
+        "palabras": [
+          "CONTORNO",
+          "BRONZER"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Iluminadores y rubores",
+        "palabras": [
+          "RUBOR",
+          "ILUMINADOR",
+          "BLUSH"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Bases y correctores",
+        "palabras": [
+          "BASE",
+          "CORRECTOR",
+          " BB ",
+          "CC CREAM"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Labios",
+        "palabras": [
+          "LABIAL",
+          "GLOSS",
+          "LIP",
+          "LABIOS",
+          "BALSAMO"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Sombras",
+        "palabras": [
+          "SOMBRA",
+          "PIGMENTO"
+        ]
+      },
+      {
+        "grupo": "Maquillaje",
+        "sub": "Ojos y cejas",
+        "palabras": [
+          "PESTANINA",
+          "MASCARA",
+          "DELINEADOR",
+          "CEJA",
+          "PESTANA"
+        ]
+      }
+    ],
+    "por_categoria_mayorista": {
+      "KITS": [
+        "Maquillaje",
+        "Kits"
       ],
-      "Cabello": [
-        "CAPILAR",
-        "ACCESORIOS CABELLO"
+      "SOMBRAS": [
+        "Maquillaje",
+        "Sombras"
       ],
-      "Cuidado facial y corporal": [
-        "CUIDADO FACIAL",
-        "CORPORAL"
+      "POLVOS": [
+        "Maquillaje",
+        "Polvos sueltos y compactos"
       ],
-      "Accesorios": [
-        "ACCESORIOS"
+      "BASES": [
+        "Maquillaje",
+        "Bases y correctores"
+      ],
+      "ILUMINADORES": [
+        "Maquillaje",
+        "Iluminadores y rubores"
+      ],
+      "LABIOS": [
+        "Maquillaje",
+        "Labios"
+      ],
+      "FIJADORES": [
+        "Maquillaje",
+        "Fijadores y primers"
+      ],
+      "OJOS": [
+        "Maquillaje",
+        "Ojos y cejas"
+      ],
+      "BRONZER": [
+        "Maquillaje",
+        "Bronzer y contornos"
+      ],
+      "ROSTRO": [
+        "Maquillaje",
+        "Bases y correctores"
+      ],
+      "CUIDADO FACIAL": [
+        "Cuidado de la piel",
+        "Hidratantes y contorno de ojos"
+      ],
+      "CAPILAR": [
+        "Cabello",
+        "Tratamientos y ampollas"
+      ],
+      "CORPORAL": [
+        "Cuerpo y perfumes",
+        "Cremas y mantequillas"
+      ],
+      "BROCHAS": [
+        "Accesorios",
+        "Brochas"
+      ],
+      "ACCESORIOS MAQUILLAJE": [
+        "Accesorios",
+        "Otros accesorios"
+      ],
+      "ACCESORIOS CABELLO": [
+        "Accesorios",
+        "Accesorios para el cabello"
+      ],
+      "ACCESORIOS": [
+        "Accesorios",
+        "Otros accesorios"
       ]
-    }
+    },
+    "categorias_mezcladas": [
+      "ROSTRO"
+    ],
+    "correcciones": {}
   },
   "marcas": {
     "Atenea": [
