@@ -26,9 +26,15 @@ y GitHub le envía un correo a la cuenta **alemakeup**.
 
 ## config.json
 
-- `precios.margen_porcentaje`: ganancia sobre el precio mayorista (50 = +50 %).
-- `precios.redondear_a`: redondea hacia arriba el precio de venta (500 → $17.250 queda en $17.500).
-- `precios.no_superar_precio_detal_mayorista`: si es `true`, el precio nunca supera el precio al detal del mayorista.
+**Precios** (sección `precios`):
+
+- `margen_porcentaje`: ganancia sobre el precio mayorista para toda la tienda (50 = +50 %).
+- `redondear_a`: redondea hacia arriba el precio de venta (500 → $17.250 queda en $17.500).
+- `por_marca`: reglas especiales para una marca. Ya está configurada:
+  - `MILAGROS`: `"modo": "precio_publico"`, se vende al precio público fijo de la marca (igual que en Farmatodo), porque el mayorista no deja margen.
+  - Para otra marca con otro margen: `"ATENEA": {"margen_porcentaje": 40}`.
+- `por_producto`: precio fijo para un producto puntual. Copia el `id` de `scraper/reporte_precios.csv`: `"<id>": 25000`.
+
 - `categorias.excluir_que_contengan`: categorías del mayorista que no se publican (por ejemplo, promociones).
 - `categorias.reglas`: clasifica cada producto por palabras de su nombre (ej. "BROCHA" → Accesorios / Brochas).
   Se revisan en orden y gana la primera que coincide. Las categorías del mayorista solo se usan si el nombre no dice nada,

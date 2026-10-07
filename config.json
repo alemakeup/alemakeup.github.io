@@ -22,7 +22,14 @@
   "precios": {
     "margen_porcentaje": 50,
     "redondear_a": 500,
-    "no_superar_precio_detal_mayorista": false
+    "por_marca": {
+      "MILAGROS": {
+        "_nota": "Marca con precio fijo al público (igual que en Farmatodo): se vende a ese precio, sin margen encima.",
+        "modo": "precio_publico",
+        "redondear_a": 100
+      }
+    },
+    "por_producto": {}
   },
   "mayorista": {
     "api": "https://elb.soyclickstore.com/api/v1",

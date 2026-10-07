@@ -123,17 +123,38 @@ def descargar_productos(cfg):
     return list(productos.values())
 
 
+def reglas_de_precio(p, pc):
+    """Reglas generales de precio, sobrescritas por las de la marca que aparezca en el nombre."""
+    reglas = {"modo": "margen", "margen_porcentaje": pc["margen_porcentaje"], "redondear_a": pc["redondear_a"]}
+    nombre = " " + normalizar(p.get("title", "")) + " "
+    for marca, ajustes in pc.get("por_marca", {}).items():
+        if " " + normalizar(marca) + " " in nombre:
+            reglas.update({k: v for k, v in ajustes.items() if not k.startswith("_")})
+            break
+    return reglas
+
+
 def precio_venta(p, cfg):
+    """Precio de venta según el modo:
+    - "margen": costo mayorista + margen_porcentaje (el general).
+    - "precio_publico": el precio al detal del mayorista, para marcas con precio fijo al público.
+    Un producto puntual se puede fijar a mano en precios.por_producto."""
     pc = cfg["precios"]
     costo = p.get("preciomayor") or p.get("precio") or 0
     if costo <= 0:
         return costo, 0
-    paso = pc["redondear_a"] or 1
-    venta = math.ceil(costo * (1 + pc["margen_porcentaje"] / 100) / paso) * paso
+    manual = pc.get("por_producto", {}).get(p["_id"])
+    if manual:
+        return costo, int(manual)
+
+    r = reglas_de_precio(p, pc)
     detal = p.get("precio") or 0
-    if pc.get("no_superar_precio_detal_mayorista") and costo < detal < venta:
+    if r["modo"] == "precio_publico" and detal > 0:
         venta = detal
-    return costo, venta
+    else:
+        venta = costo * (1 + r["margen_porcentaje"] / 100)
+    paso = r["redondear_a"] or 1
+    return costo, math.ceil(round(venta) / paso) * paso
 
 
 class Clasificador:
@@ -348,8 +369,8 @@ def main():
     print(f"  Catálogo:  {DIR_DATA / 'products.js'}")
     print(f"  Reporte:   {REPORTE}  (privado, con costos)")
     if caros:
-        print(f"  Aviso: {caros} productos quedan más caros que el precio detal del propio mayorista.")
-        print("         Puedes activar 'no_superar_precio_detal_mayorista' en config.json.")
+        print(f"  Nota: {caros} productos quedan más caros que el precio detal del mayorista")
+        print("        (por la ganancia mínima o por un ajuste de marca en config.json → precios).")
 
 
 if __name__ == "__main__":
