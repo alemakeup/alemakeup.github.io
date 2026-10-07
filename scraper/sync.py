@@ -38,6 +38,7 @@ SITE = RAIZ / "site"
 DIR_IMG = SITE / "img" / "productos"
 DIR_DATA = SITE / "data"
 REPORTE = RAIZ / "scraper" / "reporte_precios.csv"
+PRECIOS_ALEXANDRA = RAIZ / "precios_alexandra.json"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AlemakeupSync/1.0",
@@ -253,6 +254,10 @@ def main():
     marcas = [(m, [normalizar(k) if k.strip() == k else " " + normalizar(k) + " " for k in ks])
               for m, ks in cfg.get("marcas", {}).items()]
     clasificar = Clasificador(cfg["categorias"])
+    manuales = {}
+    if PRECIOS_ALEXANDRA.exists():
+        manuales = {k: v["precio"] for k, v in json.loads(PRECIOS_ALEXANDRA.read_text(encoding="utf-8")).items()}
+    ignorados = []
 
     print("1/3 Leyendo catálogo del mayorista...")
     crudos = descargar_productos(cfg)
@@ -262,7 +267,13 @@ def main():
     for p in crudos:
         if not p.get("activo", True) or not p.get("showmayor", True):
             continue
-        costo, venta = precio_venta(p, cfg)
+        costo, regla = precio_venta(p, cfg)
+        venta = regla
+        if p["_id"] in manuales:
+            if manuales[p["_id"]] > costo:
+                venta = manuales[p["_id"]]
+            else:  # el mayorista subió el costo por encima del precio de Alexandra
+                ignorados.append(f"{p.get('title', '').strip()}: precio ${manuales[p['_id']]:,} ≤ costo ${costo:,}")
         if venta <= 0:
             continue
 
@@ -304,7 +315,9 @@ def main():
             "categoria_mayorista": " / ".join(titulo_bonito(c) for c in cats),
             "costo_mayorista": costo,
             "precio_detal_mayorista": p.get("precio") or 0,
+            "precio_regla": regla,
             "precio_alemakeup": venta,
+            "precio_de_alexandra": "si" if venta != regla else "",
             "ganancia": venta - costo,
         })
 
@@ -364,6 +377,11 @@ def main():
         w.writeheader()
         w.writerows(sorted(reporte, key=lambda r: r["producto"]))
 
+    if manuales:
+        print(f"  Precios de Alexandra aplicados: {len(manuales) - len(ignorados)}")
+    if ignorados:
+        print(f"  AVISO: {len(ignorados)} precios de Alexandra quedaron por debajo del costo; se usó la regla:")
+        print("\n".join("    - " + x for x in ignorados))
     caros = sum(1 for r in reporte if r["precio_alemakeup"] > r["precio_detal_mayorista"] > 0)
     print(f"\nListo: {len(productos)} productos publicados.")
     print(f"  Catálogo:  {DIR_DATA / 'products.js'}")

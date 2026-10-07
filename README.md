@@ -16,6 +16,7 @@ No hace falta tener el computador prendido.
 | Ver la tienda en internet | Abrir https://alemakeup.github.io |
 | Ver la tienda en el computador, sin internet | Doble clic en **`Abrir tienda.bat`** |
 | Cambiar el % de ganancia, datos de contacto, medios de pago… | Editar `config.json` y luego doble clic en **`Publicar cambios.bat`**; los precios nuevos salen en la próxima actualización (6 a.m.) |
+| **Poner precios uno por uno** | Doble clic en **`Excel de precios.bat`** → se abre el Excel → Alexandra llena la columna amarilla **Precio Alexandra** → guardar y cerrar → doble clic en **`Subir precios.bat`** |
 | Actualizar el catálogo ya, sin esperar a las 6 a.m. | En GitHub: pestaña **Actions** → **Actualizar y publicar** → **Run workflow** |
 | Probar el catálogo en el computador | Doble clic en **`Actualizar catalogo.bat`** (no publica nada) |
 
@@ -26,7 +27,11 @@ y GitHub le envía un correo a la cuenta **alemakeup**.
 
 ## config.json
 
-**Precios** (sección `precios`):
+**Precios de Alexandra:** el precio que ella escribe en el Excel manda sobre cualquier regla. Se guarda en
+`precios_alexandra.json`, que solo tiene precios de venta. El Excel (`Precios Alemakeup.xlsx`) tiene los costos y **no se publica**.
+Si el mayorista sube un costo por encima del precio de Alexandra, ese producto usa la regla del 50 % y el script lo avisa.
+
+**Precios automáticos** (sección `precios`, para todo lo que Alexandra no haya llenado):
 
 - `margen_porcentaje`: ganancia sobre el precio mayorista para toda la tienda (50 = +50 %).
 - `redondear_a`: redondea hacia arriba el precio de venta (500 → $17.250 queda en $17.500).
