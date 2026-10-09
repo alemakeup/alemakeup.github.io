@@ -39,6 +39,7 @@ COLUMNAS = [  # (título, ancho)
     ("Ganancia %", 12),
 ]
 COL_ID, COL_ALEXANDRA = 1, 8
+VECES_MAXIMO = 8  # un precio de 8 o más veces el costo se toma como error de digitación
 
 FUENTE = "Arial"
 ROSA = "B4706F"
@@ -171,7 +172,7 @@ def importar():
         ws = load_workbook(EXCEL)[HOJA]
     except PermissionError:
         sys.exit(f"Cierra «{EXCEL.name}» en Excel y vuelve a intentar.")
-    precios, perdida, raros = {}, [], []
+    precios, perdida, raros, exagerados = {}, [], [], []
     for fila in ws.iter_rows(min_row=2, values_only=True):
         pid, producto, costo, valor = fila[0], fila[3], fila[4], fila[COL_ALEXANDRA - 1]
         if not pid or valor in (None, ""):
@@ -187,6 +188,9 @@ def importar():
             continue
         if costo and valor <= costo:
             perdida.append(f"{producto}: ${valor:,} (costo ${costo:,})")
+        if costo and valor >= costo * VECES_MAXIMO:  # casi siempre es un cero de más
+            exagerados.append(f"{producto}: ${valor:,} (costo ${costo:,}, {valor / costo:.0f} veces)")
+            continue
         precios[pid] = {"precio": valor, "producto": producto}
     JSON_PRECIOS.write_text(json.dumps(dict(sorted(precios.items(), key=lambda x: x[1]["producto"].lower())),
                                        ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -194,6 +198,10 @@ def importar():
     if perdida:
         print(f"\nAVISO: {len(perdida)} precios son iguales o menores al costo (se usará la regla del 50 %):")
         print("\n".join("  - " + x for x in perdida))
+    if exagerados:
+        print(f"\nAVISO: {len(exagerados)} precios son {VECES_MAXIMO} o más veces el costo (¿un cero de más?)."
+              " NO se subieron; corrígelos en el Excel y vuelve a subir:")
+        print("\n".join("  - " + x for x in exagerados))
     if raros:
         print(f"\nAVISO: {len(raros)} casillas no son un número y se ignoraron:")
         print("\n".join("  - " + x for x in raros))
