@@ -552,5 +552,9 @@
       "RUBY ROSE",
       "RUBY"
     ]
+  },
+  "descripciones": {
+    "refrescar_cada_dias": 7,
+    "maximo_por_dia": 150
   }
 }

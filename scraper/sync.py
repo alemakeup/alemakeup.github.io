@@ -15,6 +15,7 @@ Uso:
 
 import argparse
 import csv
+import html
 import io
 import json
 import math
@@ -23,7 +24,7 @@ import sys
 import time
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import requests
@@ -39,6 +40,7 @@ DIR_IMG = SITE / "img" / "productos"
 DIR_DATA = SITE / "data"
 REPORTE = RAIZ / "scraper" / "reporte_precios.csv"
 PRECIOS_ALEXANDRA = RAIZ / "precios_alexandra.json"
+DESCRIPCIONES = RAIZ / "scraper" / "descripciones.json"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AlemakeupSync/1.0",
@@ -156,6 +158,51 @@ def precio_venta(p, cfg):
         venta = costo * (1 + r["margen_porcentaje"] / 100)
     paso = r["redondear_a"] or 1
     return costo, math.ceil(round(venta) / paso) * paso
+
+
+# Líneas de la descripción del mayorista que no deben publicarse (precios suyos, textos de su tienda)
+LINEAS_PROHIBIDAS = re.compile(
+    r"\$\s?\d|precio por unidad|gastos de env[ií]o|pantalla de pagos|impuesto incluido|whats|wa\.me|https?://|www\.",
+    re.I)
+
+
+def limpiar_descripcion(texto_html):
+    """HTML del mayorista → texto plano con saltos de línea, sin precios ni datos de su tienda."""
+    t = re.sub(r"(?i)<br\s*/?>|</?(div|p|li|ul|ol|h\d)\b[^>]*>", "\n", texto_html or "")
+    t = re.sub(r"<[^>]+>", "", t)
+    t = html.unescape(t).replace("\xa0", " ").replace("\r", "").replace("**", "")
+    lineas = [re.sub(r"[ \t]+", " ", l).strip() for l in t.split("\n")]
+    lineas = [l for l in lineas if l and not LINEAS_PROHIBIDAS.search(l)]
+    return "\n".join(lineas)[:2500]
+
+
+def actualizar_descripciones(cfg, ids):
+    """Trae la descripción de cada producto desde su ficha. Guarda un caché y solo refresca
+    una parte por día, para no hacer cientos de consultas diarias al mayorista."""
+    m, d = cfg["mayorista"], cfg.get("descripciones", {})
+    cache = json.loads(DESCRIPCIONES.read_text(encoding="utf-8")) if DESCRIPCIONES.exists() else {}
+    vence = (date.today() - timedelta(days=d.get("refrescar_cada_dias", 7))).isoformat()
+    faltan = [i for i in ids if i not in cache]
+    viejas = sorted((i for i in ids if i in cache and cache[i]["fecha"] < vence), key=lambda i: cache[i]["fecha"])
+    pedir = faltan + viejas[: d.get("maximo_por_dia", 150)]
+
+    def traer(pid):
+        try:
+            prod = get_json(f"{m['api']}/market/product/{pid}", {})["body"]["producto"]
+            return pid, limpiar_descripcion(prod.get("descripcion"))
+        except Exception as e:
+            print(f"  ! sin descripción para {pid}: {e}")
+            return pid, None
+
+    if pedir:
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            for pid, texto in ex.map(traer, pedir):
+                if texto is not None:
+                    cache[pid] = {"fecha": date.today().isoformat(), "texto": texto}
+    vigentes = {i: cache[i] for i in ids if i in cache}  # olvida productos retirados
+    DESCRIPCIONES.write_text(json.dumps(vigentes, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(f"  Descripciones: {len(pedir)} consultadas, {len(vigentes)} en total")
+    return {i: v["texto"] for i, v in vigentes.items()}
 
 
 class Clasificador:
@@ -322,6 +369,11 @@ def main():
         })
 
     orden_grupos = cfg["categorias"]["orden_grupos"]
+    print("Descripciones de los productos...")
+    descripciones = actualizar_descripciones(cfg, [x["id"] for x in productos])
+    for prod in productos:
+        prod["descripcion"] = descripciones.get(prod["id"], "")
+
     productos.sort(key=lambda x: (
         orden_grupos.index(x["grupo"]) if x["grupo"] in orden_grupos else len(orden_grupos),
         x["categoria"], x["nombre"].lower(),

@@ -91,6 +91,13 @@
     $("#mCat").textContent = p.categoria;
     $("#mTitle").textContent = p.nombre;
     $("#mPrice").textContent = cop.format(p.precio);
+    const desc = (p.descripcion || "").trim();
+    const larga = desc.length > 280;
+    $("#mDescWrap").hidden = !desc;
+    $("#mDesc").textContent = desc;
+    $("#mDesc").classList.toggle("collapsed", larga);
+    $("#mDescMore").hidden = !larga;
+    $("#mDescMore").textContent = "Ver más";
     $("#mQty").textContent = "1";
     const img = $("#mImg");
     img.src = p.imagenes[0] || "assets/logo.webp";
@@ -265,6 +272,10 @@
   $("#openCart").addEventListener("click", () => { renderCarrito(); abrir("#drawer"); });
   $("#mMinus").addEventListener("click", () => { cantidad = Math.max(1, cantidad - 1); $("#mQty").textContent = cantidad; });
   $("#mPlus").addEventListener("click", () => { cantidad++; $("#mQty").textContent = cantidad; });
+  $("#mDescMore").addEventListener("click", () => {
+    const abierta = $("#mDesc").classList.toggle("collapsed") === false;
+    $("#mDescMore").textContent = abierta ? "Ver menos" : "Ver más";
+  });
   $("#mAdd").addEventListener("click", () => {
     const v = varianteElegida();
     if (v === null) return;
