@@ -1,12 +1,13 @@
 # Actualiza el catálogo del mayorista y publica la tienda en GitHub Pages.
-# - Todos los días a las 6:00 a.m. hora Colombia (11:00 UTC)
+# - Cada 3 horas entre 6:00 a.m. y 9:00 p.m. hora Colombia (6, 9, 12, 3, 6 y 9) para reflejar
+#   rápido los productos nuevos y los que el mayorista desactiva por agotados
 # - Cada vez que se suben cambios a la rama main
 # - Manualmente desde la pestaña "Actions" → "Actualizar y publicar" → "Run workflow"
 name: Actualizar y publicar
 
 on:
   schedule:
-    - cron: "0 11 * * *"
+    - cron: "0 11,14,17,20,23,2 * * *"
   push:
     branches: [main]
   workflow_dispatch:

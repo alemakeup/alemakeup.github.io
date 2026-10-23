@@ -8,16 +8,17 @@ Los productos, las fotos y los precios se copian automáticamente del catálogo 
 
 **La tienda está publicada en https://alemakeup.github.io**
 
-**Todos los días a las 6:00 a.m.** GitHub actualiza sola la tienda con los productos, precios y fotos del mayorista.
+**Cada 3 horas, de 6:00 a.m. a 9:00 p.m.,** GitHub actualiza sola la tienda con los productos, precios y fotos del mayorista
+(productos nuevos aparecen y los que el mayorista desactiva por agotados desaparecen).
 No hace falta tener el computador prendido.
 
 | Quiero… | Hago… |
 |---|---|
 | Ver la tienda en internet | Abrir https://alemakeup.github.io |
 | Ver la tienda en el computador, sin internet | Doble clic en **`Abrir tienda.bat`** |
-| Cambiar el % de ganancia, datos de contacto, medios de pago… | Editar `config.json` y luego doble clic en **`Publicar cambios.bat`**; los precios nuevos salen en la próxima actualización (6 a.m.) |
+| Cambiar el % de ganancia, datos de contacto, medios de pago… | Editar `config.json` y luego doble clic en **`Publicar cambios.bat`**; los precios nuevos salen en la próxima actualización (máximo 3 horas) |
 | **Poner precios uno por uno** | Doble clic en **`Excel de precios.bat`** → se abre el Excel → Alexandra llena la columna amarilla **Precio Alexandra** → guardar y cerrar → doble clic en **`Subir precios.bat`** |
-| Actualizar el catálogo ya, sin esperar a las 6 a.m. | En GitHub: pestaña **Actions** → **Actualizar y publicar** → **Run workflow** |
+| Actualizar el catálogo ya, sin esperar la próxima actualización | En GitHub: pestaña **Actions** → **Actualizar y publicar** → **Run workflow** |
 | Probar el catálogo en el computador | Doble clic en **`Actualizar catalogo.bat`** (no publica nada) |
 
 Si GitHub no puede leer al mayorista (por ejemplo, porque su página está caída), la tienda sigue mostrando la última versión
